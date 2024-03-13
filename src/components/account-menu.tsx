@@ -21,7 +21,7 @@ export function AccountMenu() {
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 p-6">
+      <DropdownMenuContent align="end" className="w-56 p-6 bg-background">
         <DropdownMenuLabel className="flex flex-col">
           <span>Olá, Fulano</span>
           <span className="text-xs font-normal text-muted-foreground">
