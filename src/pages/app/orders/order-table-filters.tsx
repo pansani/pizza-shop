@@ -17,7 +17,7 @@ export function OrderTableFilters() {
       <Input placeholder="Nome do cliente" className="h-8 w-[320px]" />
       <Select defaultValue="all">
         <SelectTrigger className="h-8 w-[180px] border border-input">
-          <SelectValue />
+          <SelectValue placeholder="Todos Status" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Todos Status</SelectItem>
