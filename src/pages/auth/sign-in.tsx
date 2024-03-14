@@ -1,10 +1,12 @@
+import { signIn } from "@/api/sign-in";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
+import { useMutation } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -15,20 +17,34 @@ const signInForm = z.object({
 type SignInForm = z.infer<typeof signInForm>;
 
 export function SignIn() {
-  const { register, handleSubmit } = useForm<SignInForm>();
+  const [searchParams] = useSearchParams();
 
-  const handleSignIn = (data: SignInForm) => {
-    console.log(data);
+  const { register, handleSubmit } = useForm<SignInForm>({
+    defaultValues: {
+      email: searchParams.get("email") ?? "",
+    },
+  });
 
-    toast.success("Enviamos um link de autenticaçao para o seu e-mail!", {
-      action: {
-        label: "Reenviar e-mail",
-        onClick: () => {
-          toast.success("E-mail reenviado com sucesso!");
+  const { mutateAsync: authenticate } = useMutation({
+    mutationFn: signIn,
+  });
+
+  async function handleSignIn(data: SignInForm) {
+    try {
+      await authenticate({ email: data.email });
+
+      toast.success("Enviamos um link de autenticaçao para o seu e-mail!", {
+        action: {
+          label: "Reenviar e-mail",
+          onClick: () => {
+            toast.success("E-mail reenviado com sucesso!");
+          },
         },
-      },
-    });
-  };
+      });
+    } catch {
+      toast.error("Credenciais Inválidas!");
+    }
+  }
 
   return (
     <>

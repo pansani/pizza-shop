@@ -1,6 +1,8 @@
+import { registerRestaurant } from "@/api/register-restaurant";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-label";
+import { useMutation } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 
 import { useForm } from "react-hook-form";
@@ -21,18 +23,31 @@ export function SignUp() {
   const { register, handleSubmit } = useForm<SignUpForm>();
   const navigate = useNavigate();
 
-  const handleSignIn = (data: SignUpForm) => {
-    console.log(data);
+  const { mutateAsync: resgisterRestaurantFn } = useMutation({
+    mutationFn: registerRestaurant,
+  });
 
-    toast.success("Restaurante cadastrado com sucesso", {
-      action: {
-        label: "Login",
-        onClick: () => {
-          navigate("/sign-in");
+  async function handleSignUp(data: SignUpForm) {
+    try {
+      await resgisterRestaurantFn({
+        email: data.email,
+        restaurantName: data.restaurantName,
+        managerName: data.managerName,
+        phone: data.phone,
+      });
+
+      toast.success("Restaurante cadastrado com sucesso", {
+        action: {
+          label: "Login",
+          onClick: () => {
+            navigate(`/sign-in?email=${data.email}`);
+          },
         },
-      },
-    });
-  };
+      });
+    } catch {
+      console.log("Erro ao cadastrar restaurante");
+    }
+  }
 
   return (
     <>
@@ -51,7 +66,7 @@ export function SignUp() {
             </p>
           </div>
 
-          <form className="space-y-4" onSubmit={handleSubmit(handleSignIn)}>
+          <form className="space-y-4" onSubmit={handleSubmit(handleSignUp)}>
             <div className="space-y-2">
               <Label htmlFor="restaurantName">Nome do estabelecimento</Label>
               <Input
